@@ -1,0 +1,10 @@
+{
+    "header": {
+        "nav": {
+            "btn": "Catalog",
+            "inp" : "Search for products",
+            "sign" : "Sign in",
+            "basket": "Basket"
+        }
+    }
+}

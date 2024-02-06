@@ -6,5 +6,14 @@
             "sign" : "Sign in",
             "basket": "Basket"
         }
+    },
+    "main": {
+        "1": "Popular categories",
+        "2": "Самые горячие скидки",
+        "3": "Hottest discounts",
+        "4": "Sports nutrition",
+        "5": "Gaming consoles",
+        "6": "Washing machines",
+        "7": "Immerse yourself in cinema"
     }
 }

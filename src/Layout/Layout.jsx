@@ -8,8 +8,9 @@ import {
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SwiperTime from "../components/SwiperTime/SwiperTime";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
   // translate
@@ -18,11 +19,18 @@ const Layout = () => {
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
   };
-  
+
+  /// path
+  const { pathname } = useLocation();
+
+  /// data popular
+  const dataPopular = useSelector((store) => console.log(store));
+  console.log(dataPopular);
+
   return (
     <>
       <header className="header">
-        <nav className="border-b-[2px] border-b-gray-100">
+        <nav className="border-b-[2px] border-b-gray-100 fixed z-10 bg-gray-50 w-[100%] shadow-md">
           <nav className="nav md:px-[20px] flex items-center max-w-[1200px] justify-between mx-auto px-[35px] sm:px-[80px]">
             <img
               src="src/assets/images/LOGO.png"
@@ -99,16 +107,91 @@ const Layout = () => {
             </form>
           </div>
         </nav>
-        <section className="section">
-            <div className="max-w-[1200px] mx-auto p-[20px]">
-                <SwiperTime />
-            </div>
+        <section className="section pt-[180px]">
+          <div className="max-w-[1200px] mx-auto p-[20px]">
+            <SwiperTime />
+          </div>
         </section>
       </header>
       <main className="main">
-        <Outlet />
+        {pathname == "/" ? (
+          <main>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Популярные категории{" "}
+                <img
+                  src="src/assets/images/popular.png"
+                  className="w-[50px] h-[50px] rounded-[10px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Самые горячие скидки{" "}
+                <img
+                  src="src/assets/images/fire.jpg"
+                  className="w-[50px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Без смартфона ни дня{" "}
+                <img
+                  src="src/assets/images/phone.jpg"
+                  className="w-[100px] h-[90px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Спортивное питание{" "}
+                <img
+                  src="src/assets/images/dumbell.jpg"
+                  className="w-[70px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Игровые приставки{" "}
+                <img
+                  src="src/assets/images/jostic.jpg"
+                  className="w-[50px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Стиральные машины{" "}
+                <img
+                  src="src/assets/images/washing.jpg"
+                  className="w-[50px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Погрузитесь в кино{" "}
+                <img
+                  src="src/assets/images/tv.jpg"
+                  className="w-[70px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+          </main>
+        ) : (
+          <Outlet />
+        )}
       </main>
-      <footer className="footer bg-gray-50">
+      <footer className="footer bg-gray-100">
         <div className="max-w-[1200px] mx-auto p-[20px] py-[50px]">
           <ul className="flex items-start justify-around gap-[30px] lg:gap-[0] lg:justify-between flex-wrap">
             <li>
@@ -119,22 +202,48 @@ const Layout = () => {
               />
             </li>
             <li className="flex flex-col gap-[15px]">
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">+992 980 22 76 22</p>
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">royal_shop@gmail.com</p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                +992 980 22 76 22
+              </p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                royal_shop@gmail.com
+              </p>
             </li>
             <li className="flex flex-col gap-[15px]">
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">Каталог товаров</p>
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">Нотбуки</p>
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">Машини</p>
-                <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">Стиралное машини</p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                Каталог товаров
+              </p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                Нотбуки
+              </p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                Машини
+              </p>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                Стиралное машини
+              </p>
             </li>
             <li className="flex flex-col gap-[15px]">
-            <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">Кантакт</p>
-            <div className="flex items-center gap-[15px] flex-wrap">
-                <img src="src/assets/images/facebook.png" className="rounded-[50%] w-[50px] h-[50px]" alt="" />
-                <img src="src/assets/images/instagramm.png" className="rounded-[50%] w-[50px] h-[50px]" alt="" />
-                <img src="src/assets/images/telegramm.png" className="rounded-[50%] w-[50px] h-[50px]" alt="" />
-            </div>
+              <p className="cursor-pointer hover:text-blue-500 text-[20px] font-[600]">
+                Кантакт
+              </p>
+              <div className="flex items-center gap-[15px] flex-wrap">
+                <img
+                  src="src/assets/images/facebook.png"
+                  className="rounded-[50%] w-[50px] h-[50px]"
+                  alt=""
+                />
+                <img
+                  src="src/assets/images/instagramm.png"
+                  className="rounded-[50%] w-[50px] h-[50px]"
+                  alt=""
+                />
+                <img
+                  src="src/assets/images/telegramm.png"
+                  className="rounded-[50%] w-[50px] h-[50px]"
+                  alt=""
+                />
+              </div>
             </li>
           </ul>
         </div>

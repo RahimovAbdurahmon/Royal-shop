@@ -5,14 +5,19 @@ import {
   Search,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
-import { Button } from "@mui/material";
-import { useState } from "react";
+import { Button, Skeleton } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import SwiperTime from "../components/SwiperTime/SwiperTime";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getPopulatCatalog } from "../api/Layout/LayoutApi";
+import { setDialogCity } from "../reducer/Layout/Layout";
+import DialogCity from "../components/DialogCity/DialogCity";
 
 const Layout = () => {
+  // dispatch
+  const dispatch = useDispatch();
   // translate
   const [lng, setLng] = useState("ru");
   const { t, i18n } = useTranslation();
@@ -23,20 +28,29 @@ const Layout = () => {
   /// path
   const { pathname } = useLocation();
 
+  /// city name
+  const nameCity = useSelector((store) => store.layout.nameCity);
+
   /// data popular
-  const dataPopular = useSelector((store) => console.log(store));
-  console.log(dataPopular);
+  const dataPopular = useSelector((store) => store.layout.dataPopular);
+  const isLoading = useSelector((store) => store.layout.isLoading);
+  useEffect(() => {
+    dispatch(getPopulatCatalog());
+  }, [dispatch]);
+  let skeleton = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
     <>
       <header className="header">
         <nav className="border-b-[2px] border-b-gray-100 fixed z-10 bg-gray-50 w-[100%] shadow-md">
           <nav className="nav md:px-[20px] flex items-center max-w-[1200px] justify-between mx-auto px-[35px] sm:px-[80px]">
-            <img
-              src="src/assets/images/LOGO.png"
-              className="w-[100px] lg:w-[150px] rounded-[50%]"
-              alt=""
-            />
+            <Link to={"/"}>
+              <img
+                src="src/assets/images/LOGO.png"
+                className="w-[100px] lg:w-[150px] rounded-[50%]"
+                alt=""
+              />
+            </Link>
             <div className="hidden md:flex">
               <Button
                 variant="contained"
@@ -64,18 +78,23 @@ const Layout = () => {
               </form>
             </div>
             <ul className="flex items-center lg:gap-[20px] sm:gap-[50px] gap-[20px] md:gap-[10px] cursor-pointer">
-              <li className="flex flex-col hover:text-blue-500 items-center gap-[1px]">
+              <li
+                onClick={() => dispatch(setDialogCity())}
+                className="flex flex-col hover:text-blue-500 items-center gap-[1px]"
+              >
                 <PlaceOutlined sx={{ fontSize: "35px" }} />
-                <p>Душанбе</p>
+                <p>{nameCity}</p>
               </li>
               <li className="flex flex-col hover:text-blue-500 items-center gap-[1px]">
                 <AccountCircleOutlined sx={{ fontSize: "35px" }} />
                 <p>Войти</p>
               </li>
-              <li className="flex flex-col hover:text-blue-500 items-center">
-                <ShoppingCartOutlined sx={{ fontSize: "35px" }} />
-                <p>Корзина</p>
-              </li>
+              <Link to={"cart"}>
+                <li className="flex flex-col hover:text-blue-500 items-center">
+                  <ShoppingCartOutlined sx={{ fontSize: "35px" }} />
+                  <p>Корзина</p>
+                </li>
+              </Link>
             </ul>
           </nav>
           <div className="flex md:hidden px-[40px] pb-[5px] sm:px-[80px]">
@@ -107,15 +126,15 @@ const Layout = () => {
             </form>
           </div>
         </nav>
-        <section className="section pt-[180px]">
-          <div className="max-w-[1200px] mx-auto p-[20px]">
-            <SwiperTime />
-          </div>
-        </section>
       </header>
-      <main className="main">
+      <main className="main pt-[180px]">
         {pathname == "/" ? (
           <main>
+            <section className="section">
+              <div className="max-w-[1200px] mx-auto p-[20px]">
+                <SwiperTime />
+              </div>
+            </section>
             <section className="section1 max-w-[1200px] mx-auto p-[20px]">
               <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
                 Популярные категории{" "}
@@ -125,6 +144,39 @@ const Layout = () => {
                   alt=""
                 />
               </h1>
+              <div className="grid p-[30px] grid-cols-1 pl-[60px] sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-center gap-[20px]">
+                {isLoading
+                  ? skeleton.map((elem) => {
+                      return (
+                        <div key={elem}>
+                          <Skeleton
+                            variant="text"
+                            width="200px"
+                            height="150px"
+                          />
+                          <Skeleton
+                            width="200px"
+                            variant="text"
+                            height="30px"
+                          />
+                        </div>
+                      );
+                    })
+                  : dataPopular.slice(0, 5).map((elem) => {
+                      return (
+                        <div key={elem.id}>
+                          <img
+                            src={`${import.meta.env.VITE_APP_FILES_URL}${
+                              elem?.categoryImage
+                            }`}
+                            className="w-[200px] h-[150px]"
+                            alt=""
+                          />
+                          <h1 className="text-[20px]">{elem.categoryName}</h1>
+                        </div>
+                      );
+                    })}
+              </div>
             </section>
             <section className="section1 max-w-[1200px] mx-auto p-[20px]">
               <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
@@ -135,56 +187,39 @@ const Layout = () => {
                   alt=""
                 />
               </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Без смартфона ни дня{" "}
-                <img
-                  src="src/assets/images/phone.jpg"
-                  className="w-[100px] h-[90px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Спортивное питание{" "}
-                <img
-                  src="src/assets/images/dumbell.jpg"
-                  className="w-[70px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Игровые приставки{" "}
-                <img
-                  src="src/assets/images/jostic.jpg"
-                  className="w-[50px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Стиральные машины{" "}
-                <img
-                  src="src/assets/images/washing.jpg"
-                  className="w-[50px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Погрузитесь в кино{" "}
-                <img
-                  src="src/assets/images/tv.jpg"
-                  className="w-[70px] h-[50px]"
-                  alt=""
-                />
-              </h1>
+              <div className="grid p-[30px] grid-cols-1 pl-[60px] sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-center gap-[20px]">
+                {isLoading
+                  ? skeleton.map((elem) => {
+                      return (
+                        <div key={elem}>
+                          <Skeleton
+                            variant="text"
+                            width="200px"
+                            height="150px"
+                          />
+                          <Skeleton
+                            width="200px"
+                            variant="text"
+                            height="30px"
+                          />
+                        </div>
+                      );
+                    })
+                  : dataPopular.slice(5, 10).map((elem) => {
+                      return (
+                        <div key={elem.id}>
+                          <img
+                            src={`${import.meta.env.VITE_APP_FILES_URL}${
+                              elem?.categoryImage
+                            }`}
+                            className="w-[200px] h-[150px]"
+                            alt=""
+                          />
+                          <h1 className="text-[20px]">{elem.categoryName}</h1>
+                        </div>
+                      );
+                    })}
+              </div>
             </section>
           </main>
         ) : (
@@ -248,8 +283,62 @@ const Layout = () => {
           </ul>
         </div>
       </footer>
+      <DialogCity />
     </>
   );
 };
 
 export default Layout;
+
+{
+  /* <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Без смартфона ни дня{" "}
+                <img
+                  src="src/assets/images/phone.jpg"
+                  className="w-[100px] h-[90px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Спортивное питание{" "}
+                <img
+                  src="src/assets/images/dumbell.jpg"
+                  className="w-[70px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Игровые приставки{" "}
+                <img
+                  src="src/assets/images/jostic.jpg"
+                  className="w-[50px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Стиральные машины{" "}
+                <img
+                  src="src/assets/images/washing.jpg"
+                  className="w-[50px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Погрузитесь в кино{" "}
+                <img
+                  src="src/assets/images/tv.jpg"
+                  className="w-[70px] h-[50px]"
+                  alt=""
+                />
+              </h1>
+            </section> */
+}

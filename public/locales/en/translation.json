@@ -15,5 +15,8 @@
         "5": "Gaming consoles",
         "6": "Washing machines",
         "7": "Immerse yourself in cinema"
+    },
+    "cart": {
+        "title": "Cart is Empty"
     }
 }

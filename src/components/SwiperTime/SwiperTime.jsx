@@ -27,10 +27,11 @@ const SwiperTime = () => {
         modules={[Autoplay, Pagination, Navigation]}
         className="mySwiper h-[70vh]"
       >
-        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/image(1).jpg" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
-        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/image(2).jpg" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
-        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/image(3).jpg" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
-        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/image(4).jpg" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
+        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/mackbook.webp" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
+        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/iphone.webp" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
+        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/s23ultra.jpg" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
+        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/max.avif" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
+        <SwiperSlide className='cursor-pointer rounded-[20px]'><img src="src/assets/images/pad.webp" className='rounded-[20px] w-[100%] h-[100%]' alt="" /></SwiperSlide>
       </Swiper>
     </>
   );

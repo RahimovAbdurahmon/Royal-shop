@@ -1,11 +1,8 @@
-// import { Box, Button, Modal } from "@mui/material";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDialogCity, setNameCity } from "../../reducer/Layout/Layout";
 import { Close } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-// import Typography from '@mui/material/Typography';
 import Modal from "@mui/material/Modal";
 
 const style = {
@@ -25,7 +22,7 @@ const DialogCity = () => {
   const dialogCity = useSelector((store) => store.layout.dialogCity);
   const dispatch = useDispatch();
   let nameCity = useSelector((store) => store.layout.nameCity);
-//   console.log(nameCity);
+  //   console.log(nameCity);
 
   return (
     <div className="max-w-[1200px]">

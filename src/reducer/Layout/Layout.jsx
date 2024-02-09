@@ -1,13 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getPopulatCatalog } from "../../api/Layout/LayoutApi";
+import { getCatalog, getProduct, getProductsInCart } from "../../api/Layout/LayoutApi";
 
 const layout = createSlice({
   name: "layout",
   initialState: {
-    dataPopular: [],
+    catalog: [],
     isLoading: false,
     dialogCity: false,
     nameCity: localStorage.getItem("nameCity"),
+    dialogCatalog: null,
+    subCatalog: [],
+    dataProduct: [],
+    dataProductInCart: [],
   },
   reducers: {
     setDialogCity: (state) => {
@@ -16,22 +20,51 @@ const layout = createSlice({
     setNameCity: (state, action) => {
       state.nameCity = localStorage.setItem("nameCity", action.payload);
     },
+    setDialogCatalog: (state, action) => {
+      state.dialogCatalog = action.payload;
+    },
+    setSubCatalog: (state, action) => {
+      state.subCatalog = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getPopulatCatalog.pending, (state) => {
+      .addCase(getCatalog.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getPopulatCatalog.fulfilled, (state, action) => {
+      .addCase(getCatalog.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.dataPopular = action.payload;
+        state.catalog = action.payload;
       })
-      .addCase(getPopulatCatalog.rejected, (state) => {
+      .addCase(getCatalog.rejected, (state) => {
+        state.isLoading = false;
+      });
+    builder
+      .addCase(getProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.dataProduct = action.payload;
+      })
+      .addCase(getProduct.rejected, (state) => {
+        state.isLoading = false;
+      });
+    builder
+      .addCase(getProductsInCart.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductsInCart.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.dataProductInCart = action.payload;
+      })
+      .addCase(getProductsInCart.rejected, (state) => {
         state.isLoading = false;
       });
   },
 });
 
-export const { setDialogCity, setNameCity } = layout.actions;
+export const { setDialogCity, setNameCity, setDialogCatalog, setSubCatalog } =
+  layout.actions;
 
 export default layout.reducer;

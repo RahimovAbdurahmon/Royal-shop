@@ -1,23 +1,28 @@
 import {
   AccountCircleOutlined,
   Close,
+  KeyboardBackspace,
   PlaceOutlined,
   Search,
   ShoppingCartOutlined,
+  Menu,
+  FavoriteBorderOutlined,
 } from "@mui/icons-material";
 import { Button, Skeleton } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SwiperTime from "../components/SwiperTime/SwiperTime";
 import { useDispatch, useSelector } from "react-redux";
-import { getPopulatCatalog } from "../api/Layout/LayoutApi";
-import { setDialogCity } from "../reducer/Layout/Layout";
+import { setDialogCatalog, setDialogCity } from "../reducer/Layout/Layout";
 import DialogCity from "../components/DialogCity/DialogCity";
+import Catalog from "../components/Catalog/Catalog";
+import { getCatalog, getProduct } from "../api/Layout/LayoutApi";
 
 const Layout = () => {
   // dispatch
   const dispatch = useDispatch();
+
   // translate
   const [lng, setLng] = useState("ru");
   const { t, i18n } = useTranslation();
@@ -32,16 +37,23 @@ const Layout = () => {
   const nameCity = useSelector((store) => store.layout.nameCity);
 
   /// data popular
-  const dataPopular = useSelector((store) => store.layout.dataPopular);
+  const catalog = useSelector((store) => store.layout.catalog);
   const isLoading = useSelector((store) => store.layout.isLoading);
   useEffect(() => {
-    dispatch(getPopulatCatalog());
+    dispatch(getCatalog());
+    dispatch(getProduct());
   }, [dispatch]);
   let skeleton = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+  /// catalog data
+  const dialogCatalog = useSelector((store) => store.layout.dialogCatalog);
+
+  /// data product
+  const dataProduct = useSelector((store) => store.layout.dataProduct);
+
   return (
     <>
-      <header className="header">
+      <header className="header z-20">
         <nav className="border-b-[2px] border-b-gray-100 fixed z-10 bg-gray-50 w-[100%] shadow-md">
           <nav className="nav md:px-[20px] flex items-center max-w-[1200px] justify-between mx-auto px-[35px] sm:px-[80px]">
             <Link to={"/"}>
@@ -56,7 +68,10 @@ const Layout = () => {
                 variant="contained"
                 size="large"
                 sx={{ padding: "12px 30px", marginRight: "20px" }}
-                startIcon={<Close />}
+                startIcon={
+                  dialogCatalog == null ? <Menu /> : <KeyboardBackspace />
+                }
+                onClick={() => dispatch(setDialogCatalog("xxl"))}
               >
                 <span className="hidden lg:block">{t("header.nav.btn")}</span>
               </Button>
@@ -85,10 +100,12 @@ const Layout = () => {
                 <PlaceOutlined sx={{ fontSize: "35px" }} />
                 <p>{nameCity}</p>
               </li>
-              <li className="flex flex-col hover:text-blue-500 items-center gap-[1px]">
-                <AccountCircleOutlined sx={{ fontSize: "35px" }} />
-                <p>Войти</p>
-              </li>
+              <Link to={"/login"}>
+                <li className="flex flex-col hover:text-blue-500 items-center gap-[1px]">
+                  <AccountCircleOutlined sx={{ fontSize: "35px" }} />
+                  <p>Войти</p>
+                </li>
+              </Link>
               <Link to={"cart"}>
                 <li className="flex flex-col hover:text-blue-500 items-center">
                   <ShoppingCartOutlined sx={{ fontSize: "35px" }} />
@@ -162,7 +179,7 @@ const Layout = () => {
                         </div>
                       );
                     })
-                  : dataPopular.slice(0, 5).map((elem) => {
+                  : catalog.slice(0, 5).map((elem) => {
                       return (
                         <div key={elem.id}>
                           <img
@@ -205,7 +222,7 @@ const Layout = () => {
                         </div>
                       );
                     })
-                  : dataPopular.slice(5, 10).map((elem) => {
+                  : catalog.slice(5, 10).map((elem) => {
                       return (
                         <div key={elem.id}>
                           <img
@@ -216,6 +233,67 @@ const Layout = () => {
                             alt=""
                           />
                           <h1 className="text-[20px]">{elem.categoryName}</h1>
+                        </div>
+                      );
+                    })}
+              </div>
+            </section>
+            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
+              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
+                Продукта <ShoppingCartOutlined sx={{ fontSize: "40px" }} />
+              </h1>
+              <div className="flex items-center justify-around flex-wrap pt-[50px]">
+                {isLoading
+                  ? skeleton.map((elem) => {
+                      return (
+                        <div key={elem}>
+                          <Skeleton
+                            variant="text"
+                            width="200px"
+                            height="150px"
+                          />
+                          <Skeleton
+                            width="200px"
+                            variant="text"
+                            height="30px"
+                          />
+                        </div>
+                      );
+                    })
+                  : dataProduct.map((elem) => {
+                      return (
+                        <div key={elem.id} className="w-[300px]">
+                          <img
+                            src={`${import.meta.env.VITE_APP_FILES_URL}${
+                              elem?.image
+                            }`}
+                            className="w-[300px]"
+                            alt=""
+                          />
+                          <div className="flex items-center justify-between pt-[20px]">
+                            <h1
+                              className={
+                                elem.hasDiscount
+                                  ? "text-[20px] line-through text-gray-500"
+                                  : "text-[20px]"
+                              }
+                            >
+                              {elem.discountPrice}
+                            </h1>
+                            <FavoriteBorderOutlined />
+                          </div>
+                          <h1 className="text-[22px] font-[600]">
+                            {elem.price} c
+                          </h1>
+                          <h1 className="text-[20px] pb-[20px]">
+                            {elem.productName}
+                          </h1>
+                          <Button
+                            variant="contained"
+                            startIcon={<ShoppingCartOutlined />}
+                          >
+                            B корзина
+                          </Button>
                         </div>
                       );
                     })}
@@ -284,61 +362,9 @@ const Layout = () => {
         </div>
       </footer>
       <DialogCity />
+      <Catalog />
     </>
   );
 };
 
 export default Layout;
-
-{
-  /* <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Без смартфона ни дня{" "}
-                <img
-                  src="src/assets/images/phone.jpg"
-                  className="w-[100px] h-[90px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Спортивное питание{" "}
-                <img
-                  src="src/assets/images/dumbell.jpg"
-                  className="w-[70px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Игровые приставки{" "}
-                <img
-                  src="src/assets/images/jostic.jpg"
-                  className="w-[50px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Стиральные машины{" "}
-                <img
-                  src="src/assets/images/washing.jpg"
-                  className="w-[50px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section>
-            <section className="section1 max-w-[1200px] mx-auto p-[20px]">
-              <h1 className="text-[20px] lg:text-[25px] font-[600] lg:font-[700] xl:text-[30px] flex items-center gap-[20px]">
-                Погрузитесь в кино{" "}
-                <img
-                  src="src/assets/images/tv.jpg"
-                  className="w-[70px] h-[50px]"
-                  alt=""
-                />
-              </h1>
-            </section> */
-}
